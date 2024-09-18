@@ -11,7 +11,7 @@ MY_COMMIT=""
 
 inherit git-r3
 EGIT_REPO_URI="https://github.com/enzious/deskflow.git"
-EGIT_BRANCH="fix/stuck-keys-on-leave"
+EGIT_BRANCH="test"
 
 DESCRIPTION="Lets you easily share a single mouse and keyboard between multiple computers"
 HOMEPAGE="https://symless.com/synergy https://github.com/symless/synergy-core/"
