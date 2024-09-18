@@ -5,14 +5,17 @@ EAPI=7
 
 inherit cmake desktop xdg-utils virtualx
 
-MY_P=synergy-1.16.0-beta-r2
+MY_P=deskflow-99999999
 GTEST_COMMIT=18f8200e3079b0e54fa00cb7ac55d4c39dcf6da6
+MY_COMMIT=""
+
+inherit git-r3
+EGIT_REPO_URI="https://github.com/enzious/deskflow.git"
+EGIT_BRANCH="fix/stuck-keys-on-leave"
 
 DESCRIPTION="Lets you easily share a single mouse and keyboard between multiple computers"
 HOMEPAGE="https://symless.com/synergy https://github.com/symless/synergy-core/"
 SRC_URI="
-	https://github.com/symless/synergy/archive/refs/tags/1.16.0-beta+r2.tar.gz
-		-> ${MY_P}.tar.gz
 	https://dev.gentoo.org/~mgorny/dist/synergy-1.12.0.png
 	test? (
 		https://github.com/google/googletest/archive/${GTEST_COMMIT}.tar.gz
@@ -57,11 +60,15 @@ BDEPEND="
 		dev-qt/linguist-tools:5
 	)"
 
-DOCS=( ChangeLog doc/synergy.conf.example{,-advanced,-basic} )
+DOCS=( ChangeLog doc/deskflow.conf.example{,-advanced,-basic} )
 
 #PATCHES=(
 #	"${FILESDIR}"/${PN}-1.14.1.32-gcc13.patch
 #)
+
+src_unpack() {
+	git-r3_src_unpack
+}
 
 src_prepare() {
 	# broken on Xvfb
@@ -77,8 +84,8 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DSYNERGY_BUILD_LEGACY_GUI=$(usex gui)
-		-DSYNERGY_BUILD_LEGACY_INSTALLER=OFF
+		-DDESKFLOW_BUILD_LEGACY_GUI=$(usex gui)
+		-DDESKFLOW_BUILD_LEGACY_INSTALLER=OFF
 		-DBUILD_TESTS=$(usex test)
 	)
 
@@ -95,19 +102,19 @@ src_test() {
 }
 
 src_install() {
-	dobin "${BUILD_DIR}"/bin/{synergy{c,s},syntool}
+	dobin "${BUILD_DIR}"/bin/deskflow{c,s,-legacy}
 
 	if use gui; then
-		newbin "${BUILD_DIR}"/bin/synergy qsynergy
-		newicon -s 256 "${DISTDIR}"/synergy-1.12.0.png qsynergy.png
-		make_desktop_entry qsynergy Synergy qsynergy 'Utility;'
+		newbin "${BUILD_DIR}"/bin/deskflow qdeskflow
+		newicon -s 256 "${DISTDIR}"/synergy-1.12.0.png qdeskflow.png
+		make_desktop_entry qdeskflow Deskflow qdeskflow 'Utility;'
 	fi
 
 	insinto /etc
-	newins doc/synergy.conf.example synergy.conf
+	newins doc/deskflow.conf.example deskflow.conf
 
-	#newman doc/synergyc.man synergyc.1
-	#newman doc/synergys.man synergys.1
+	#newman doc/deskflowc.man deskflowc.1
+	#newman doc/deskflows.man deskflows.1
 
 	einstalldocs
 }
